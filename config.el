@@ -109,6 +109,10 @@
            (unless (string= "-" project-name)
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
+;; Hide the macOS title bar and window decorations.
+(when (eq system-type 'darwin)
+  (add-to-list 'default-frame-alist '(undecorated . t)))
+
 ;; Prevents some cases of Emacs flickering
 (add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 
