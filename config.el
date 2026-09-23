@@ -1,82 +1,260 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
-
-;; Doom exposes five (optional) variables for controlling fonts in Doom:
+;;; config.el --- Custom functions for Doom -*- lexical-binding: t; -*-
+;;; Commentary: hey
+;;;
 ;;
-;; - `doom-font' -- the primary font to use
-;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
-;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;; - `doom-symbol-font' -- for symbols
-;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
+;; Copyright (C) 2019-2021 Jacob Chvatal
 ;;
-;; See 'C-h v doom-font' for documentation and more examples of what they
-;; accept. For example:
+;; Author: YY <http://github/YY> ;; Maintainer: YY <YY> ;; Created: YY
+;; Modified: YY
+;; Version: 0.0.1
+;; Keywords: tools
+;; Homepage: https://github.com/YY/YY
+;; Package-Requires: ((emacs "24.1"))
 ;;
-;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
-;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
-;;
-;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
-;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
-;; refresh your font settings. If Emacs still can't find your font, it likely
-;; wasn't installed correctly. Font issues are rarely Doom issues!
+;; This file is not part of GNU Emacs.
+;;; Commentary: hey
+;;; Code:
 
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-one)
-;; Specify both a dark and light theme, like so and Doom will choose which one
-;; to load based on your system light/dark setting:
-;;
-;;   (setq doom-theme '(doom-one   . doom-one-light))   ; (DARK . LIGHT)
-;;
-;; If you want more pro-active theme switching based on OS light/dark mode, look
-;; up the `auto-dark' package.
+(require 'evil)
 
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+;; make sure that emacs receives this
+;; there must be a better way to do this?
+(setenv "GNUPGHOME" "~/.config/gnupg")
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+;; run commands from emacs in a bash shell
+;; TODO: What path gives us bash with the environment variables?
 
 
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `with-eval-after-load' block, otherwise Doom's defaults may override your
-;; settings. E.g.
-;;
-;;   (with-eval-after-load 'PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look them up).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+(if (eq system-type 'darwin)
+  nil
+  (progn
+   (setq
+    shell-file-name "/run/current-system/sw/bin/bash"
+    explicit-shell-file-name  "/run/current-system/sw/bin/bash"))
+  (setq-default
+   shell-file-name "/run/current-system/sw/bin/bash"
+   explicit-shell-file-name  "/run/current-system/sw/bin/bash"))
+
+
+;;; Code:
+(setq user-full-name "Jacob Chvatal"
+      user-mail-address "jakechvatal@gmail.com"
+      doom-theme 'doom-city-lights
+      doom-font
+      (if (eq system-type 'darwin)
+          (font-spec :family "Berkeley Mono" :size 12 :weight 'semi-light)
+        (font-spec :family "monospace" :size 12 :weight 'semi-light))
+      doom-variable-pitch-font
+      (if (eq system-type 'darwin)
+          (font-spec :family "Gill Sans" :size 12)
+          (font-spec :family "sans" :size 12)))
+
+(setq-default delete-by-moving-to-trash t
+              tab-width 4
+              uniquify-buffer-name-style 'forward
+              window-combination-resize t
+              x-stretch-cursor t
+              history-length 1000
+              prescient-history-length 100)
+
+(setq undo-limit 80000000
+      gc-cons-threshold most-positive-fixnum
+      evil-want-fine-undo t
+      auth-source-cache-expiry nil
+      inhibit-compacting-font-caches t
+      display-line-numbers-type 'relative
+      select-enable-clipboard t
+      read-process-output-max (* 1024 1024)
+      ;; lsp-completion-provider :capf
+      lsp-idle-delay 0.500
+      ;; lsp-ui conflicts with eldoc; disable it
+      lsp-ui-sideline-enable nil
+      lsp-enable-symbol-highlighting nil
+      evil-ex-substitute-global t)
+
+;; garbage collect when idling, but allow as many conses as we need. no freezing!
+(run-with-idle-timer 2 t (lambda () (garbage-collect)))
+
+(setq projectile-globally-ignored-directories
+      '("node_modules" ".happypack" "flow-typed" "build" "lib")
+      grep-find-ignored-directories
+      '("node_modules" ".happypack"))
+
+(delete-selection-mode 1)
+
+
+;; --- Window management
+;; always split window to bottom right
+(setq evil-vsplit-window-right t
+      evil-split-window-below t)
+
+(map!
+ :leader
+ :prefix "w"
+ "v" (lambda () (interactive) (evil-window-vsplit) (+vertico/switch-buffer))
+ "s" (lambda () (interactive) (evil-window-split) (+vertico/switch-buffer))
+ "x" (lambda () (interactive) (evil-window-vsplit) (+vertico/project-find-file))
+ "z" (lambda () (interactive) (evil-window-vsplit) (+vertico/project-search)))
+
+;; TODO: figure out the buffer names I want!
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string ".*/[0-9]*-?" "🢔 " buffer-file-name)
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+
+;; Prevents some cases of Emacs flickering
+(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
+
+(use-package! abbrev
+  :init
+  (setq-default abbrev-mode t)
+  ;; a hook function that sets the abbrev-table to org-mode-abbrev-table
+  ;; whenever the major mode is a text mode
+  (defun tec/set-text-mode-abbrev-table ()
+    (if (derived-mode-p 'text-mode)
+        (setq local-abbrev-table org-mode-abbrev-table)))
+  :commands abbrev-mode
+  :hook
+  (abbrev-mode tec/set-text-mode-abbrev-table)
+  :config
+  (setq abbrev-file-name (expand-file-name "abbrev.el" doom-private-dir))
+  (setq save-abbrevs 'silently))
+
+(map! :leader
+      "h r n" (lambda () (interactive)
+                (async-shell-command "hey rebuild")))
+
+;;; automatically chmod shell scripts
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+
+(defun doom-dashboard-widget-banner ()
+  "Render a NixOS desktop widget banner."
+  (mapc (lambda (line)
+          (insert (propertize
+                   (+doom-dashboard--center +doom-dashboard--width line)
+                   'face 'doom-dashboard-banner) " ")
+          (insert "\n"))
+        '("
+                              ::::.    ':::::     ::::'
+                              ':::::    ':::::.  ::::'
+                                :::::     '::::.:::::
+                          .......:::::..... ::::::::
+                        ::::::::::::::::::. ::::::    ::::.
+                        ::::::::::::::::::::: :::::.  .::::'
+                              .....           ::::' :::::'
+                              :::::            '::' :::::'
+                    ........:::::               ' :::::::::::.
+                    :::::::::::::                 :::::::::::::
+                    ::::::::::: ..              :::::
+                        .::::: .:::            :::::
+                        .:::::  :::::          '''''    .....
+                        :::::   ':::::.  ......:::::::::::::'
+                        :::     ::::::. ':::::::::::::::::'
+                                .:::::::: '::::::::::
+                              .::::''::::.     '::::.
+                              .::::'   ::::.     '::::.
+                            .::::      ::::      '::::.
+
+                                    E M A C S
+
+")))
+
+(use-package! atomic-chrome
+  :when (locate-library "atomic-chrome")
+  :after-call after-focus-change-function
+  :config
+  (setq atomic-chrome-default-major-mode 'org-mode
+        atomic-chrome-buffer-open-style 'frame)
+  (atomic-chrome-start-server))
+
+(map! :n [tab] (cmds! (and (featurep! :editor fold)
+                           (save-excursion (end-of-line) (invisible-p (point))))
+                      #'+fold/toggle
+                      (fboundp 'evil-jump-item)
+                      #'evil-jump-item)
+      :v [tab] (cmds! (and (bound-and-true-p yas-minor-mode)
+                           (or (eq evil-visual-selection 'line)
+                               (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                      #'yas-insert-snippet
+                      (fboundp 'evil-jump-item)
+                      #'evil-jump-item)
+
+      :leader
+      "h L" #'global-keycast-mode
+      "f t" #'find-in-dotfiles
+      "f T" #'browse-dotfiles)
+
+(use-package! browse-url
+  :init
+  (setq browse-url-browser-function 'browse-url-generic
+        browse-url-generic-program "firefox"))
+
+(define-key evil-normal-state-map (kbd "SPC a") 'link-hint-open-link)
+
+;; Find a URL
+;; TODO: Visit the localhost port shared by the current project or the page that has it open.
+(map! :leader
+      "\"" (lambda ()
+             (interactive)
+             (browse-url (read-string "URL:")))
+      "'" (lambda () (interactive) (consult-ripgrep)))
+
+(use-package! symex
+  :when (locate-library "symex")
+  :config
+  (symex-initialize)
+  (global-set-key (kbd "s-;") 'symex-mode-interface)
+  :custom
+  (symex-modal-backend 'evil)
+  (global-set-key (kbd "C-(") 'sp-backward-barf-sexp)
+  (global-set-key (kbd "C-)") 'sp-forward-barf-sexp)
+  (global-set-key (kbd "C-9") 'sp-backward-slurp-sexp)
+  (global-set-key (kbd "C-0") 'sp-forward-slurp-sexp))
+
+;; md-roam
+
+;; (use-package! md-roam
+;; :after org-roam
+;; :config
+;; (setq org-roam-file-extensions '("org" "md"))
+;; (md-roam-mode 1)
+;; (setq md-roam-file-extension "md")
+;; (org-roam-db-autosync-mode 1))
+
+(use-package! epg
+  :init (defvar epg-pinentry-mode 'loopback))
+
+
+(use-package! vlf
+  :when (locate-library "vlf")
+  :config
+  (require 'vlf-setup))
+
+;; (advice-add #'evil-motion-range :around #'~/evil-motion-range--wrapper)
+
+
+(use-package! wakatime-mode
+  :when (locate-library "wakatime-mode")
+  :functions global-wakatime-mode
+  :init (global-wakatime-mode))
+
+(use-package! activity-watch-mode
+  :when (locate-library "activity-watch-mode")
+  :functions global-activity-watch-mode
+  :config (global-activity-watch-mode))
+
+
+
+;; don't show the ignored git files in projectile
+(setq projectile-git-command "git ls-files -zco --exclude-standard")
+
+(provide 'config)
+
+;;; config.el ends here
