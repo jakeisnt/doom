@@ -75,7 +75,8 @@
 ;; garbage collect when idling, but allow as many conses as we need. no freezing!
 (run-with-idle-timer 2 t (lambda () (garbage-collect)))
 
-(setq projectile-globally-ignored-directories
+(setq projectile-project-search-path '(("~/Documents" . 2))
+      projectile-globally-ignored-directories
       '("node_modules" ".happypack" "flow-typed" "build" "lib")
       grep-find-ignored-directories
       '("node_modules" ".happypack"))
