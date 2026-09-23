@@ -79,7 +79,7 @@
        web
        yaml
        lean4
-       zig
+       ;; zig
 
        :email
        ;;(mu4e +org +gmail)
@@ -92,9 +92,9 @@
        :private
        editor
        modeline
-       org
+       ;; org
        tidal
-       copilot
+       ;; copilot
 
        :config
        (default +bindings +smartparens))
